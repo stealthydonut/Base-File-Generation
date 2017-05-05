@@ -1,0 +1,7 @@
+from google.cloud import storage
+client = storage.Client()
+bucket = client.get_bucket('Bloomberg')
+# Then do other things...
+blob = bucket.get_blob('London.csv')
+#print(blob.download_as_string())
+test=blob.download_as_string()
