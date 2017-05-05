@@ -19,7 +19,6 @@ df2['digit flag']=1
 df3=df2[['digit flag','phaseone_id_bb_company','phaseone_id_bb_parent_co','phaseone_ticker']]
 londonpre=pd.merge(df, df3, how='left',  left_on=['phaseone_id_bb_company','phaseone_id_bb_parent_co','phaseone_ticker'], right_on=['phaseone_id_bb_company','phaseone_id_bb_parent_co','phaseone_ticker'])
 london_ticker=londonpre[londonpre['digit flag']!=1.0]
-london_ticker.drop_duplicates(cols='phaseone_ticker', take_last=True)
 london_ticker_gold=london_ticker.drop_duplicates(subset=['phaseone_ticker'], keep='last')
 london_ticker_gold['quandl']="LSE/"
 london_ticker_gold["quandl_ticker"] = london_ticker_gold["quandl"].map(str) + london_ticker_gold["phaseone_ticker"]
