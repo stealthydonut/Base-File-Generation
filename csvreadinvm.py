@@ -26,6 +26,9 @@ london_ticker_gold["quandl_ticker"] = london_ticker_gold["quandl"].map(str) + lo
 london_ticker_gold2=london_ticker_gold['quandl_ticker']
 #convert to a ticker list
 lse_ticker=london_ticker_gold2.values.T.tolist()
+#strip out leading and trailing 0's
+lse_ticker = [x.strip(' ') for x in lse_ticker]
+
 
 #Print the ticker list
 for i in lse_ticker:    
