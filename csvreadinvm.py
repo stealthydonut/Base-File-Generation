@@ -33,8 +33,8 @@ lse_ticker = [x.strip(' ') for x in lse_ticker]
 #Print the ticker list
 for i in lse_ticker:    
     try:     
-        data = qd.get(i[0])
-        data['ticker']= i[0]
+        data = qd.get(i)
+        data['ticker']= i
         data['index1'] = data.index
         data['dates'] = [dt.datetime(year=d.year, month=d.month, day=d.day) for d in data['index1']]
         data['year'] = data['index1'].dt.strftime("%Y")
@@ -49,5 +49,5 @@ for i in lse_ticker:
         error = error.append(errortail)
         print dt.datetime.now()
     except:
-        print i[0] + ' error'
+        print i + ' error'
         print dt.datetime.now()
