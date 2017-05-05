@@ -6,7 +6,7 @@ curl https://bootstrap.pypa.io/get-pip.py | python
 # quandl 
 pip install quandl google-cloud
 
-mrkir hope
+mrdir hope
 touch /home/kinger6688/startup-done
 git clone https://github.com/stealthydonut/Base-File-Generation.git
 # uncomment if you want this to run at boot time
