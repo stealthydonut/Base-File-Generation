@@ -5,6 +5,7 @@ import os
 import time
 import datetime as dt
 import pandas.core.algorithms as algos
+import StringIO
 qd.ApiConfig.api_key ='BVno6pBYgcEvZJ6uctTr'
 bigdata = pd.DataFrame()
 badlist = pd.DataFrame()
