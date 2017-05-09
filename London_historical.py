@@ -17,7 +17,7 @@ from google.cloud import storage
 client = storage.Client()
 bucket = client.get_bucket('bloomberg')
 # Then do other things...
-blob = bucket.get_blob('London.csv')
+blob = bucket.get_blob('ln.csv')
 # Define the object
 content = blob.download_as_string()
 #Because the pandas dataframe can only read from buffers or files, we need to take the string and put it into a buffer
@@ -59,6 +59,7 @@ for i in lse_ticker:
         data['year'] = data['index1'].dt.strftime("%Y")
         data['month'] = data['index1'].dt.strftime("%m")
         data['day'] = data['index1'].dt.strftime("%d")
+        data['Close']=data
         data['close_lag1']=data['Close'].shift(1)
         data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
         data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
@@ -66,7 +67,8 @@ for i in lse_ticker:
         bigdata = bigdata.append(data, ignore_index=True)
         errortail = data.tail(1)
         error = error.append(errortail)
-        print dt.datetime.now()
     except:
-        print i + ' error'
-        print dt.datetime.now()
+        #print i + ' error'
+        #print dt.datetime.now()
+        
+#Put the dataset back into storage        
