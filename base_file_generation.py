@@ -34,6 +34,7 @@ for d in dfList:
     else:
         i+=1
     c.append(i)
+
 bigdata['positive_runs'] = pd.Series(c, index=bigdata.index)
 #Negative Runs
 dfList =bigdata['changeneg'].tolist()
@@ -46,6 +47,7 @@ for d in dfList:
     else:
         i+=1
     c.append(i)
+
 bigdata['negative_runs'] = pd.Series(c, index=bigdata.index)
 bigdata['counter']=1
 ################################################################################################################################################
@@ -58,6 +60,7 @@ for d in dflist:
     if d==0:
         i+=1
     c.append(i)
+
 bigdata['negative_master_run'] = pd.Series(c, index=bigdata.index)
 ################################################################################################################################################
 #Build a key that incrementally all the parts of the run together (i.e. run has three components - but will like them to have a master run key)#
@@ -69,6 +72,7 @@ for d in dflist:
     if d==0:
         i+=1
     c.append(i)
+
 bigdata['positive_master_run'] = pd.Series(c, index=bigdata.index)
 ############################################################################
 #Build Metrics that can be used to evaluate how sequence runs end and begin#
@@ -157,6 +161,7 @@ for d in dfList:
     else:
         i=0
     c.append(i)
+
 bigdata2['negative_runs_reverse'] = pd.Series(c, index=bigdata2.index)
 #################################################
 #Percentage change based on day in sequence run##
