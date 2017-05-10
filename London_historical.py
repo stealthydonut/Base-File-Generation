@@ -73,7 +73,7 @@ for i in lse_ticker:
         
 #Put the dataset back into storage
 bucket2 = client.get_bucket('historyprices')
-df_out = pd.DataFrame(data)
+df_out = pd.DataFrame(bigdata)
 df_out.to_csv('lse_history.csv', index=False)
 blob2 = bucket2.blob('lse_history.csv')
 blob2.upload_from_filename('lse_history.csv')
