@@ -1,57 +1,3 @@
-import pandas as pd
-import numpy as np
-import quandl as qd
-import os
-import time
-import datetime as dt
-import pandas.core.algorithms as algos
-qd.ApiConfig.api_key ='BVno6pBYgcEvZJ6uctTr'
-bigdata = pd.DataFrame()
-badlist = pd.DataFrame()
-df1 = pd.DataFrame()
-
-df = pd.read_csv('hope/London.csv')
-df['firstchar'] = df['phaseone_ticker'].astype(str).str[0]
-#Identify the ones that have a digit in the first spot
-searchfor=['1','2','3','4','5','6','7','8','9','0']
-df2=df[df['firstchar'].str.contains('|'.join(searchfor))]
-df2['digit flag']=1
-df3=df2[['digit flag','phaseone_id_bb_company','phaseone_id_bb_parent_co','phaseone_ticker']]
-londonpre=pd.merge(df, df3, how='left',  left_on=['phaseone_id_bb_company','phaseone_id_bb_parent_co','phaseone_ticker'], right_on=['phaseone_id_bb_company','phaseone_id_bb_parent_co','phaseone_ticker'])
-london_ticker=londonpre[londonpre['digit flag']!=1.0]
-london_ticker_gold=london_ticker.drop_duplicates(subset=['phaseone_ticker'], keep='last')
-london_ticker_gold['quandl']="LSE/"
-london_ticker_gold["quandl_ticker"] = london_ticker_gold["quandl"].map(str) + london_ticker_gold["phaseone_ticker"]
-london_ticker_gold2=london_ticker_gold['quandl_ticker']
-#convert to a ticker list
-lse_ticker=london_ticker_gold2.values.T.tolist()
-#strip out leading and trailing 0's
-lse_ticker = [x.strip(' ') for x in lse_ticker]
-
-
-#Print the ticker list
-for i in lse_ticker:    
-    try:     
-        data = qd.get(i[0])
-        data['ticker']= i[0]
-        data['index1'] = data.index
-        data['dates'] = [dt.datetime(year=d.year, month=d.month, day=d.day) for d in data['index1']]
-        data['year'] = data['index1'].dt.strftime("%Y")
-        data['month'] = data['index1'].dt.strftime("%m")
-        data['day'] = data['index1'].dt.strftime("%d")
-        data['close_lag1']=data['Close'].shift(1)
-        data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
-        data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
-  
-        bigdata = bigdata.append(data, ignore_index=True)
-        errortail = data.tail(1)
-        error = error.append(errortail)
-        print dt.datetime.now()
-    except:
-        print i[0] + ' error'
-        print dt.datetime.now()
-
-            
 #Begin to build methodology to calculate Probability Runs
 #Convert the dataframe to a list so we can use the power of python iteration
 #Positive Runs
@@ -113,15 +59,7 @@ bigdata['per_change_lag5']=bigdata['per_change'].shift(5)
 bigdata['per_change_lag6']=bigdata['per_change'].shift(6)
 bigdata['high close per']=(bigdata['High']-bigdata['Close'])/bigdata['Close']
 bigdata['low close per']=(bigdata['Close']-bigdata['Low'])/bigdata['Close']
-  
 bigdata['open change']=(bigdata['Open']-bigdata['close_lag1'])/bigdata['close_lag1']
-   
-  
-         
-  
-  
-  
-  
 #####################################################################################
 #Both the negative and positive are using minimum because we are trying to determine#
 #the difference between the change and close
@@ -150,7 +88,6 @@ bigdata['low_close_diff']=(bigdata['Low']-bigdata['Close'])/bigdata['Close']
 bigdata['low_open_diff']=(bigdata['Low']-bigdata['Open'])/bigdata['Open']
 bigdata['high_open_diff']=(bigdata['High']-bigdata['Open'])/bigdata['Open']
 bigdata['high_low_diff']=(bigdata['High']-bigdata['Low'])
-     
 ###################################################################
 #Begin to segment daily price behavior into measurable definitions#
 ###################################################################
@@ -158,11 +95,9 @@ bigdata['down day']=np.where(bigdata['high_open_diff']< 0.001, 1, 0)
 bigdata['up day']=np.where(bigdata['low_open_diff']> -0.001, 1, 0)
 bigdata['up close']=np.where(bigdata['high_close_diff']< 0.001, 1, 0)
 bigdata['down close']=np.where(bigdata['low_close_diff']> -0.001, 1, 0)
-    
 bigdata['open_lag1']=bigdata['Open'].shift(1)
 bigdata['high_lag1']=bigdata['High'].shift(1)
 bigdata['low_lag1']=bigdata['Low'].shift(1)
-     
 bigdata['neg1 down day'] = np.where(((bigdata['high_open_diff']< 0.001) & (bigdata['negative_runs']==0)), 1, 0)
 bigdata['neg2 down day'] = np.where(((bigdata['high_open_diff']< 0.001) & (bigdata['negative_runs']==1)), 1, 0)
 bigdata['neg3 down day'] = np.where(((bigdata['high_open_diff']< 0.001) & (bigdata['negative_runs']==2)), 1, 0)
@@ -175,12 +110,10 @@ bigdata['neg3 down close'] = np.where(((bigdata['low_close_diff']> -0.001) & (bi
 bigdata['neg4 down close'] = np.where(((bigdata['low_close_diff']> -0.001) & (bigdata['negative_runs']==3)), 1, 0)
 bigdata['neg5 down close'] = np.where(((bigdata['low_close_diff']> -0.001) & (bigdata['negative_runs']==4)), 1, 0)
 bigdata['neg6 down close'] = np.where(((bigdata['low_close_diff']> -0.001) & (bigdata['negative_runs']==5)), 1, 0)
-  
 bigdata['cnt']=1
 #########################################################
 #Build negative and positive reverse sequence run counts#
 #########################################################
-   
 bigdata=bigdata.sort_values(['ticker','dates','negative_runs'],ascending=False)
 #Identify only the sequences that are actually negative#
 negseq=bigdata[bigdata['negative_runs']==1]
@@ -202,11 +135,9 @@ for d in dfList:
         i=0
     c.append(i)
 bigdata2['negative_runs_reverse'] = pd.Series(c, index=bigdata2.index)
-  
 #################################################
 #Percentage change based on day in sequence run##
 #################################################
-     
 lastday=bigdata2[bigdata2['negative_runs']==1]
 lastday['firstday1perchange']=lastday['per_change']
 lastday=lastday[['negative_master_run','firstday1perchange','ticker','dates']]
@@ -297,5 +228,4 @@ bigdata2g=pd.merge(bigdata2f, secondday, how='left', left_on=['negative_master_r
 bigdata2h=pd.merge(bigdata2g, thirdday, how='left', left_on=['negative_master_run'], right_on=['negative_master_run'])
 bigdata2i=pd.merge(bigdata2h, forthday, how='left', left_on=['negative_master_run'], right_on=['negative_master_run'])
 bigdata2_gold=pd.merge(bigdata2i, fifthday, how='left', left_on=['negative_master_run'], right_on=['negative_master_run'])
-  
-print bigdata2_gold.dtypes
+ 
