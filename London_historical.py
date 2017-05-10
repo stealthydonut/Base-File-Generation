@@ -59,7 +59,7 @@ for i in lse_ticker:
         data['year'] = data['index1'].dt.strftime("%Y")
         data['month'] = data['index1'].dt.strftime("%m")
         data['day'] = data['index1'].dt.strftime("%d")
-        data['Close']=data
+        data['Close']=data['Last Close']
         data['close_lag1']=data['Close'].shift(1)
         data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
         data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
@@ -71,9 +71,10 @@ for i in lse_ticker:
         print i + ' error'
         print dt.datetime.now()
         
-#Put the dataset back into storage        
-df_out = pd.DataFrame(bigdata)
+#Put the dataset back into storage
+bucket2 = client.get_bucket('historyprices')
+df_out = pd.DataFrame(data)
 df_out.to_csv('lse_history.csv', index=False)
-blob2 = bucket.blob('lse_history.csv')
+blob2 = bucket2.blob('lse_history.csv')
 blob2.upload_from_filename('lse_history.csv')
 
