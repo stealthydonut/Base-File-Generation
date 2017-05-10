@@ -68,8 +68,8 @@ for i in lse_ticker:
         errortail = data.tail(1)
         error = error.append(errortail)
     except:
-        #print i + ' error'
-        #print dt.datetime.now()
+        print i + ' error'
+        print dt.datetime.now()
         
 #Put the dataset back into storage        
 df_out = pd.DataFrame(bigdata)
