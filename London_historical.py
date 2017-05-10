@@ -60,6 +60,7 @@ for i in lse_ticker:
         data['month'] = data['index1'].dt.strftime("%m")
         data['day'] = data['index1'].dt.strftime("%d")
         data['Close']=data['Last Close']
+        data['Open']=data['Price']
         data['close_lag1']=data['Close'].shift(1)
         data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
         data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
