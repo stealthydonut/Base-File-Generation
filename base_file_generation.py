@@ -258,8 +258,8 @@ bigdata2i=pd.merge(bigdata2h, forthday, how='left', left_on=['negative_master_ru
 bigdata2_gold=pd.merge(bigdata2i, fifthday, how='left', left_on=['negative_master_run'], right_on=['negative_master_run'])
  
 #Put the dataset back into storage
-bucket2 = client.get_bucket('historyprices')
+bucket2 = client.get_bucket('stagingarea')
 df_out = pd.DataFrame(bigdata2_gold)
 df_out.to_csv('lse_history_base.csv', index=False)
-blob2 = bucket2.blob('lse_history_base.csv')
-blob2.upload_from_filename('lse_history_base.csv')
+blob2 = bucket2.blob('lse_history_stagingarea.csv')
+blob2.upload_from_filename('lse_history_stagingarea.csv')
