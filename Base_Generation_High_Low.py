@@ -65,7 +65,7 @@ for i in range(0,165):
     data2['nl40_cum']=data2.groupby(['ticker','nh40var'])['nl40'].cumsum()
     data2['nh150_cum']=data2.groupby(['ticker','nh150var'])['nh150'].cumsum()
     data2['nl150_cum']=data2.groupby(['ticker','nh150var'])['nl150'].cumsum() 
-    for i in range(3): 
+    for i in range(1): 
         test2=data2.groupby('ticker').tail(i)
         big=big.append(test2, ignore_index=True)
 
