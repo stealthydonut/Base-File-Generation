@@ -24,6 +24,11 @@ inMemoryFile.seek(0)
 #The low memory false exists because there was a lot of data
 bigdata=pd.read_csv(inMemoryFile, low_memory=False)
 
+#sort data to generate the key count
+bigdata=bigdata.sort_values(['ticker','dates'],ascending=True)
+bigdata['key_cnt'] = bigdata.groupby(['ticker']).cumcount() 
+
+
 for i in range(0,165):  
     data=bigdata[bigdata['key_cnt'] >= i] 
     data2=data[data['key_cnt'] < 150 + i]
