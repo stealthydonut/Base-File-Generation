@@ -7,6 +7,8 @@ import datetime as dt
 import pandas.core.algorithms as algos
 import StringIO
 from google.cloud import storage
+big = pd.DataFrame()
+
 client = storage.Client()
 bucket = client.get_bucket('stagingarea')
 # Then do other things...
