@@ -260,6 +260,6 @@ bigdata2_gold=pd.merge(bigdata2i, fifthday, how='left', left_on=['negative_maste
 #Put the dataset back into storage
 bucket2 = client.get_bucket('stagingarea')
 df_out = pd.DataFrame(bigdata2_gold)
-df_out.to_csv('lse_history_base.csv', index=False)
+df_out.to_csv('lse_history_stagingarea.csv', index=False)
 blob2 = bucket2.blob('lse_history_stagingarea.csv')
 blob2.upload_from_filename('lse_history_stagingarea.csv')
