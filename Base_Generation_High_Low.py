@@ -79,7 +79,7 @@ for i in range(0,165):
 
 #Put the dataset back into storage
 bucket2 = client.get_bucket('basefilegeneration')
-df_out = pd.DataFrame(big
+df_out = pd.DataFrame(big)
 df_out.to_csv('lse_history_base.csv', index=False)
 blob2 = bucket2.blob('lse_history_base.csv')
 blob2.upload_from_filename('lse_history_base.csv')
