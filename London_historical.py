@@ -66,7 +66,7 @@ for i in lse_ticker:
         data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
         datax=data.sort_values(['ticker','dates'],ascending=True)
         datax['key_cnt'] = datax.groupby(['ticker']).cumcount() 
-        bigdata = bigdata.append(datax, ignore_index=True)
+        bigdata = bigdata.append(datax, ignore_index=False)
         errortail = datax.tail(1)
         error = error.append(errortail)
     except:
