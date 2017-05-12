@@ -8,6 +8,8 @@ import pandas.core.algorithms as algos
 import StringIO
 from google.cloud import storage
 big = pd.DataFrame()
+bigx = pd.DataFrame()
+ 
 
 client = storage.Client()
 bucket = client.get_bucket('stagingarea')
@@ -25,7 +27,7 @@ inMemoryFile.seek(0)
 bigdata=pd.read_csv(inMemoryFile, low_memory=False)
 
 #sort data to generate the key count
-bigdata=bigdata.sort_values(['ticker','dates'],ascending=True)
+bigdata=bigdata.sort_values(['ticker','dates'],ascending=False)
 bigdata['key_cnt'] = bigdata.groupby(['ticker']).cumcount() 
 
 
@@ -69,15 +71,14 @@ for i in range(0,165):
     data2['nh40_cum']=data2.groupby(['ticker','nh40var'])['nh40'].cumsum()
     data2['nl40_cum']=data2.groupby(['ticker','nh40var'])['nl40'].cumsum()
     data2['nh150_cum']=data2.groupby(['ticker','nh150var'])['nh150'].cumsum()
-    data2['nl150_cum']=data2.groupby(['ticker','nh150var'])['nl150'].cumsum() 
-    for i in range(1): 
-        test2=data2.groupby('ticker').tail(i)
-        big=big.append(test2, ignore_index=True)
+    data2['nl150_cum']=data2.groupby(['ticker','nh150var'])['nl150'].cumsum()    
+    bigx=bigx.append(data2, ignore_index=True)
 
+big2x=bigx.drop_duplicates(subset=['ticker','dates'], keep='last')
 
 #Put the dataset back into storage
 bucket2 = client.get_bucket('basefilegeneration')
-df_out = pd.DataFrame(big)
+df_out = pd.DataFrame(big2x)
 df_out.to_csv('lse_history_base.csv', index=False)
 blob2 = bucket2.blob('lse_history_base.csv')
 blob2.upload_from_filename('lse_history_base.csv')
