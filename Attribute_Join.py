@@ -45,7 +45,6 @@ source3=source2[source2['phaseone_company_to_parent_relationship'].isnull()]
 source3=source3.drop_duplicates(subset=['phaseone_ticker'], keep='last')
 source3['quandl']="LSE/"
 source3["quandl_ticker"] = source3["quandl"].map(str) + source3["phaseone_ticker"]
-source4=source3[source3['quandl_ticker'].str.strip()]
 #Only keep the details from source
 source_gold=source3[['quandl_ticker','phaseone_id_bb_company','phaseone_industry_sector','phaseone_industry_group','phaseone_industry_subgroup']]
 #Clean up the data and get rid of whitespaces
