@@ -8,9 +8,9 @@ import pandas.core.algorithms as algos
 import StringIO
 from google.cloud import storage
 client = storage.Client()
-bucket = client.get_bucket('historyprices')
+bucket = client.get_bucket('stagingarea')
 # Then do other things...
-blob = bucket.get_blob('lse_history.csv')
+blob = bucket.get_blob('lse_history_stagingarea.csv')
 # Define the object
 content = blob.download_as_string()
 #Because the pandas dataframe can only read from buffers or files, we need to take the string and put it into a buffer
@@ -54,4 +54,10 @@ source_gold['ticker'] = source_gold['quandl_ticker'].apply(lambda x: x.strip())
 #merge the files together
 bigdata2=pd.merge(bigdata, source_gold, how='left', left_on=['ticker'], right_on=['ticker'])
 
+#Put the dataset back into storage
+bucket2 = client.get_bucket('stagingarea')
+df_out = pd.DataFrame(bigdata2)
+df_out.to_csv('lse_history_stagingarea_w_attributes.csv', index=False)
+blob2 = bucket2.blob('lse_history_stagingarea_w_attributes.csv')
+blob2.upload_from_filename('lse_history_stagingarea_w_attributes.csv')
 
