@@ -14,7 +14,7 @@ bigx = pd.DataFrame()
 client = storage.Client()
 bucket = client.get_bucket('stagingarea')
 # Then do other things...
-blob = bucket.get_blob('lse_history_stagingarea.csv')
+blob = bucket.get_blob('lse_history_stagingarea_w_attributes.csv')
 # Define the object
 content = blob.download_as_string()
 #Because the pandas dataframe can only read from buffers or files, we need to take the string and put it into a buffer
