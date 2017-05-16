@@ -69,6 +69,8 @@ downdayanalysis['cntofruns']=1
 afile=downdayanalysis[['negative_master_run','first_ma150rank','first1perchangerank','first2perchangerank','last1perchangerank','last2perchangerank','run count','cntofruns','neg1 down day','neg2 down day','neg3 down day','neg4 down day','neg5 down day','neg6 down day',\
 'neg1 down close','neg2 down close','neg3 down close','neg4 down close','neg5 down close','neg6 down close','two start downday fl','three start downday fl']]
 
+afile['seq cnt']=afile['run count']-1
+
 #Put the dataset back into storage
 bucket2 = client.get_bucket('analyticalfile')
 df_out = pd.DataFrame(afile)
