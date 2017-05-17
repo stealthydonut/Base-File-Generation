@@ -1,0 +1,6 @@
+SELECT *, (advance+decline) as total
+FROM 
+(SELECT year, month, day, sum(changepos) as advance, sum(changeneg) as decline
+FROM Stagingfiles.lse_history_stagingarea_w_attributes
+GROUP BY year, month, day
+ORDER BY year, month, day) as test
