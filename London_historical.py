@@ -64,6 +64,7 @@ for i in lse_ticker:
         data['close_lag1']=data['Close'].shift(1)
         data['changepos']=np.where(data['Close']>data['close_lag1'], 1, 0)
         data['changeneg']=np.where(data['Close']<data['close_lag1'], 1, 0)
+        data['changenone']=np.where(data['Close']=data['close_lag1'], 1, 0)
         bigdata = bigdata.append(data, ignore_index=False)
         errortail = datax.tail(1)
         error = error.append(errortail)
