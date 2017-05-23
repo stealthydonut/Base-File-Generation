@@ -46,11 +46,18 @@ for i in gdxj_ticker:
 TESTDATA=stio(myfile)
 
 daily_prices = pd.read_csv(TESTDATA, sep=",")
+#add a time stamp to the file name
+import datetime
+year = datetime.date.today().year
+month = datetime.date.today().month
+day = datetime.date.today().day
+stamp=str(year)+'/'+str(month)+'/'+str(day)
+fix='_daily_prices.csv'
 
 
 #Put the dataset back into storage
 bucket2 = client.get_bucket('gdxjtrade')
 df_out = pd.DataFrame(daily_prices)
-df_out.to_csv('daily_prices.csv', index=False)
-blob2 = bucket2.blob('daily_prices.csv')
-blob2.upload_from_filename('daily_prices.csv')
+df_out.to_csv(fix, index=False)
+blob2 = bucket2.blob(fix)
+blob2.upload_from_filename(fix)
