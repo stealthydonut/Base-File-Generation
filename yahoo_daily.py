@@ -31,8 +31,7 @@ gdxj_ticker = [x.strip(' ') for x in gdxj_ticker]
 
 #https://stackoverflow.com/questions/2960772/putting-a-variable-inside-a-string-python
 
-gdxj_ticker=['MSFT']
-
+myfile = ''
 for i in gdxj_ticker:
     #Develop the text string that can get all the data
     start="http://finance.yahoo.com/d/quotes.csv?s="
