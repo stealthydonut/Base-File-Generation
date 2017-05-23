@@ -2,6 +2,10 @@ import urllib
 import pandas as pd
 import StringIO
 import sys
+if sys.version_info[0] < 3: 
+    from StringIO import StringIO as stio
+else:
+    from io import StringIO as stio
 
 #Get the data from google cloud storage
 from google.cloud import storage
@@ -27,6 +31,8 @@ gdxj_ticker = [x.strip(' ') for x in gdxj_ticker]
 
 #https://stackoverflow.com/questions/2960772/putting-a-variable-inside-a-string-python
 
+gdxj_ticker=['MSFT']
+
 for i in gdxj_ticker:
     #Develop the text string that can get all the data
     start="http://finance.yahoo.com/d/quotes.csv?s="
@@ -36,9 +42,9 @@ for i in gdxj_ticker:
     #Get the data from the yahoo api
     link=text2
     f = urllib.urlopen(link)
-    myfile += f.read()
+    myfile += f.readline()
 
-TESTDATA=StringIO(myfile)
+TESTDATA=stio(myfile)
 
 daily_prices = pd.read_csv(TESTDATA, sep=",")
 
