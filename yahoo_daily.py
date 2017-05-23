@@ -36,6 +36,7 @@ myfile = ''
 for i in gdxj_ticker:
     #Develop the text string that can get all the data
     start="http://finance.yahoo.com/d/quotes.csv?s="
+    #date,Float Shares,Day's Low,Day's High,Open,Previous Close,Volume,Name,Ticker
     end="&f=d2f6ghopvns"
     str1 = ''.join([i])
     text2=start+str1+end    
