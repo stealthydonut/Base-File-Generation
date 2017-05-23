@@ -51,9 +51,10 @@ import datetime
 year = datetime.date.today().year
 month = datetime.date.today().month
 day = datetime.date.today().day
-stamp=str(year)+'/'+str(month)+'/'+str(day)
-end='_daily_prices.csv'
-fix=stamp+end
+stamp=str(year)+'_'+str(month)+'_'+str(day)
+name='daily_prices'
+end='.csv'
+fix=name+stamp+end
 
 #Put the dataset back into storage
 bucket2 = client.get_bucket('gdxjtrade')
