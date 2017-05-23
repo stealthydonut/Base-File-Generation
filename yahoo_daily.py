@@ -17,5 +17,5 @@ for i in ticker:
     link=text2
     f = urllib.urlopen(link)
     myfile = f.read()
-    df = pd.read_csv(f)
+
 
