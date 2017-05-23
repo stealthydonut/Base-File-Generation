@@ -52,8 +52,8 @@ year = datetime.date.today().year
 month = datetime.date.today().month
 day = datetime.date.today().day
 stamp=str(year)+'/'+str(month)+'/'+str(day)
-fix='_daily_prices.csv'
-
+end='_daily_prices.csv'
+fix=stamp+end
 
 #Put the dataset back into storage
 bucket2 = client.get_bucket('gdxjtrade')
