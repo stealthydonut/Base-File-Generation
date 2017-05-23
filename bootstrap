@@ -8,6 +8,7 @@ pip install pandas==0.18.1 quandl google-cloud pandas-datareader
 
 touch /home/kinger6688/startup-done
 git clone https://github.com/stealthydonut/Base-File-Generation.git
+git clone https://github.com/stealthydonut/GDXJ-Trade.git
 # uncomment if you want this to run at boot time
 #python Base-File-Generation/base_file_generation.py
 # insert shutdown command here
