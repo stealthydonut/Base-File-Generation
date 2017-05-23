@@ -1,6 +1,7 @@
 import urllib
 import pandas as pd
 import StringIO
+import datetime
 import sys
 if sys.version_info[0] < 3: 
     from StringIO import StringIO as stio
@@ -35,7 +36,7 @@ myfile = ''
 for i in gdxj_ticker:
     #Develop the text string that can get all the data
     start="http://finance.yahoo.com/d/quotes.csv?s="
-    end="&f=j1f6oghps7ns"
+    end="&f=d2f6ghopvns"
     str1 = ''.join([i])
     text2=start+str1+end    
     #Get the data from the yahoo api
@@ -46,8 +47,8 @@ for i in gdxj_ticker:
 TESTDATA=stio(myfile)
 
 daily_prices = pd.read_csv(TESTDATA, sep=",")
+
 #add a time stamp to the file name
-import datetime
 year = datetime.date.today().year
 month = datetime.date.today().month
 day = datetime.date.today().day
