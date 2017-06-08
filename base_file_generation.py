@@ -137,6 +137,19 @@ bigdata['neg3 down close'] = np.where(((bigdata['low_close_diff']> -0.001) & (bi
 bigdata['neg4 down close'] = np.where(((bigdata['low_close_diff']> -0.001) & (bigdata['negative_runs']==3)), 1, 0)
 bigdata['neg5 down close'] = np.where(((bigdata['low_close_diff']> -0.001) & (bigdata['negative_runs']==4)), 1, 0)
 bigdata['neg6 down close'] = np.where(((bigdata['low_close_diff']> -0.001) & (bigdata['negative_runs']==5)), 1, 0)
+
+bigdata['pos1 up day'] = np.where(((bigdata['low_open_diff']< 0.001) & (bigdata['positive_runs']==0)), 1, 0)
+bigdata['pos2 up day'] = np.where(((bigdata['low_open_diff']< 0.001) & (bigdata['positive_runs']==1)), 1, 0)
+bigdata['pos3 up day'] = np.where(((bigdata['low_open_diff']< 0.001) & (bigdata['positive_runs']==2)), 1, 0)
+bigdata['pos4 up day'] = np.where(((bigdata['low_open_diff']< 0.001) & (bigdata['positive_runs']==3)), 1, 0)
+bigdata['pos5 up day'] = np.where(((bigdata['low_open_diff']< 0.001) & (bigdata['positive_runs']==4)), 1, 0)
+bigdata['pos6 up day'] = np.where(((bigdata['low_open_diff']< 0.001) & (bigdata['positive_runs']==5)), 1, 0)
+bigdata['pos1 up close'] = np.where(((bigdata['high_close_diff']> -0.001) & (bigdata['positive_runs']==0)), 1, 0)
+bigdata['pos2 up close'] = np.where(((bigdata['high_close_diff']> -0.001) & (bigdata['positive_runs']==1)), 1, 0)
+bigdata['pos3 up close'] = np.where(((bigdata['high_close_diff']> -0.001) & (bigdata['positive_runs']==2)), 1, 0)
+bigdata['pos4 up close'] = np.where(((bigdata['high_close_diff']> -0.001) & (bigdata['positive_runs']==3)), 1, 0)
+bigdata['pos5 up close'] = np.where(((bigdata['high_close_diff']> -0.001) & (bigdata['positive_runs']==4)), 1, 0)
+bigdata['pos6 up close'] = np.where(((bigdata['high_close_diff']> -0.001) & (bigdata['positive_runs']==5)), 1, 0)
 bigdata['cnt']=1
 #########################################################
 #Build negative and positive reverse sequence run counts#
@@ -257,9 +270,36 @@ bigdata2h=pd.merge(bigdata2g, thirdday, how='left', left_on=['negative_master_ru
 bigdata2i=pd.merge(bigdata2h, forthday, how='left', left_on=['negative_master_run'], right_on=['negative_master_run'])
 bigdata2_gold=pd.merge(bigdata2i, fifthday, how='left', left_on=['negative_master_run'], right_on=['negative_master_run'])
  
+#########################################################
+#Build negative and positive reverse sequence run counts#
+#########################################################
+bigdata2_gold=bigdata2_gold.sort_values(['ticker','dates','positive_runs'],ascending=False)
+#Identify only the sequences that are actually positive#
+posseq=bigdata2_gold[bigdata2_gold['positive_runs']==1]
+posseq2=posseq[['positive_master_run']]
+posseq2['index1'] = posseq2.index
+bigdata['index1'] = bigdata.index
+bigdata3_gold=pd.merge(posseq2, bigdata2_gold, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+################################
+#Build the reverse run variable#
+################################
+dfList =bigdata3_gold['positive_runs'].tolist()
+#print dfList
+c=[]
+i=0
+for d in dfList:
+    if d>0:
+        i+=1
+    else:
+        i=0
+    c.append(i)
+
+bigdata3_gold['positive_runs_reverse'] = pd.Series(c, index=bigdata3_gold.index)    
+    
+    
 #Put the dataset back into storage
 bucket2 = client.get_bucket('stagingarea')
-df_out = pd.DataFrame(bigdata2_gold)
+df_out = pd.DataFrame(bigdata3_gold)
 df_out.to_csv('lse_history_stagingarea.csv', index=False)
 blob2 = bucket2.blob('lse_history_stagingarea.csv')
 blob2.upload_from_filename('lse_history_stagingarea.csv')
