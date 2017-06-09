@@ -295,7 +295,30 @@ for d in dfList:
     c.append(i)
 
 bigdata3['positive_runs_reverse'] = pd.Series(c, index=bigdata3.index)    
-    
+#################################################
+#Percentage change based on day in sequence run##
+#################################################
+lastday=bigdata3[bigdata3['positive_runs']==1]
+lastday['firstday1perchange']=lastday['per_change']
+lastday=lastday[['positive_master_run','firstday1perchange','ticker','dates']]
+secondday=bigdata3[bigdata3['positive_runs']==2]
+secondday['firstday2perchange']=secondday['per_change']
+secondday=secondday[['positive_master_run','firstday2perchange','ticker','dates']]
+thirdday=bigdata3[bigdata3['positive_runs']==3]
+thirdday['firstday3perchange']=thirdday['per_change']
+thirdday=thirdday[['positive_master_run','firstday3perchange','ticker','dates']]
+forthday=bigdata3[bigdata3['positive_runs']==4]
+forthday['firstday4perchange']=forthday['per_change']
+forthday=forthday[['positive_master_run','firstday4perchange','ticker','dates']]
+fifthday=bigdata3[bigdata3['positive_runs']==5]
+fifthday['firstday5perchange']=fifthday['per_change']
+fifthday=fifthday[['positive_master_run','firstday5perchange','ticker','dates']]
+bigdata3a=pd.merge(bigdata3, lastday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+bigdata3b=pd.merge(bigdata3a, secondday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+bigdata3c=pd.merge(bigdata3b, thirdday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+bigdata3d=pd.merge(bigdata3c, forthday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+bigdata3e=pd.merge(bigdata3d, fifthday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+     
     
 #Put the dataset back into storage
 bucket2 = client.get_bucket('stagingarea')
