@@ -273,17 +273,17 @@ bigdata2_gold=pd.merge(bigdata2i, fifthday, how='left', left_on=['negative_maste
 #########################################################
 #Build negative and positive reverse sequence run counts#
 #########################################################
-bigdata2_gold=bigdata2_gold.sort_values(['ticker','dates','positive_runs'],ascending=False)
+bigdata=bigdata.sort_values(['ticker','dates','positive_runs'],ascending=False)
 #Identify only the sequences that are actually positive#
-posseq=bigdata2_gold[bigdata2_gold['positive_runs']==1]
+posseq=bigdata[bigdata['positive_runs']==1]
 posseq2=posseq[['positive_master_run']]
 posseq2['index1'] = posseq2.index
 bigdata['index1'] = bigdata.index
-bigdata3_gold=pd.merge(posseq2, bigdata2_gold, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+bigdata3=pd.merge(posseq2, bigdata, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
 ################################
 #Build the reverse run variable#
 ################################
-dfList =bigdata3_gold['positive_runs'].tolist()
+dfList =bigdata3['positive_runs'].tolist()
 #print dfList
 c=[]
 i=0
@@ -294,7 +294,7 @@ for d in dfList:
         i=0
     c.append(i)
 
-bigdata3_gold['positive_runs_reverse'] = pd.Series(c, index=bigdata3_gold.index)    
+bigdata3['positive_runs_reverse'] = pd.Series(c, index=bigdata3.index)    
     
     
 #Put the dataset back into storage
