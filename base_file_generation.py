@@ -319,10 +319,83 @@ bigdata3c=pd.merge(bigdata3b, thirdday, how='left', left_on=['positive_master_ru
 bigdata3d=pd.merge(bigdata3c, forthday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
 bigdata3e=pd.merge(bigdata3d, fifthday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
      
+lastday=bigdata3[bigdata3['positive_runs_reverse']==1]
+lastday['lastday1perchange']=lastday['per_change']
+lastday=lastday[['positive_master_run','lastday1perchange','ticker','dates']]
+secondday=bigdata3[bigdata3['positive_runs_reverse']==2]
+secondday['lastday2perchange']=secondday['per_change']
+secondday=secondday[['positive_master_run','lastday2perchange','ticker','dates']]
+thirdday=bigdata3[bigdata3['positive_runs_reverse']==3]
+thirdday['lastday3perchange']=thirdday['per_change']
+thirdday=thirdday[['positive_master_run','lastday3perchange','ticker','dates']]
+forthday=bigdata3[bigdata3['positive_runs_reverse']==4]
+forthday['lastday4perchange']=forthday['per_change']
+forthday=forthday[['positive_master_run','lastday4perchange','ticker','dates']]
+fifthday=bigdata3[bigdata3['positive_runs_reverse']==5]
+fifthday['lastday5perchange']=fifthday['per_change']
+fifthday=fifthday[['positive_master_run','lastday5perchange','ticker','dates']]
+  
+bigdata3ax=pd.merge(bigdata3e, lastday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+bigdata3bx=pd.merge(bigdata3ax, secondday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+bigdata3cx=pd.merge(bigdata3bx, thirdday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+bigdata3dx=pd.merge(bigdata3cx, forthday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+bigdata3ex=pd.merge(bigdata3dx, fifthday, how='left', left_on=['positive_master_run','ticker','dates'], right_on=['positive_master_run','ticker','dates'])
+        
+     
+lastday=bigdata3[bigdata3['positive_runs_reverse']==1]
+lastday['last1perchange']=lastday['per_change']
+lastday=lastday[['positive_master_run','last1perchange']]
+secondday=bigdata3[bigdata3['positive_runs_reverse']==2]
+secondday['last2perchange']=secondday['per_change']
+secondday=secondday[['positive_master_run','last2perchange']]
+thirdday=bigdata3[bigdata3['positive_runs_reverse']==3]
+thirdday['last3perchange']=thirdday['per_change']
+thirdday=thirdday[['positive_master_run','last3perchange']]
+forthday=bigdata3[bigdata3['positive_runs_reverse']==4]
+forthday['last4perchange']=forthday['per_change']
+forthday=forthday[['positive_master_run','last4perchange']]
+fifthday=bigdata3[bigdata3['positive_runs_reverse']==5]
+fifthday['last5perchange']=fifthday['per_change']
+fifthday=fifthday[['positive_master_run','last5perchange']]
+  
+bigdata3a=pd.merge(bigdata3ex, lastday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+bigdata3b=pd.merge(bigdata3a, secondday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+bigdata3c=pd.merge(bigdata3b, thirdday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+bigdata3d=pd.merge(bigdata3c, forthday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+bigdata3e=pd.merge(bigdata3d, fifthday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+  
+lastday=bigdata3[bigdata3['positive_runs']==1]
+lastday['first1perchange']=lastday['per_change']
+lastday=lastday[['positive_master_run','first1perchange']]
+secondday=bigdata3[bigdata3['positive_runs']==2]
+secondday['first2perchange']=secondday['per_change']
+secondday=secondday[['positive_master_run','first2perchange']]
+thirdday=bigdata3[bigdata3['positive_runs']==3]
+thirdday['first3perchange']=thirdday['per_change']
+thirdday=thirdday[['positive_master_run','first3perchange']]
+forthday=bigdata3[bigdata3['positive_runs']==4]
+forthday['first4perchange']=forthday['per_change']
+forthday=forthday[['positive_master_run','first4perchange']]
+fifthday=bigdata3[bigdata3['positive_runs']==5]
+fifthday['first5perchange']=fifthday['per_change']
+fifthday=fifthday[['positive_master_run','first5perchange']]
+  
+bigdata3f=pd.merge(bigdata3e, lastday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+bigdata3g=pd.merge(bigdata3f, secondday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+bigdata3h=pd.merge(bigdata3g, thirdday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+bigdata3i=pd.merge(bigdata3h, forthday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+bigdata3_gold=pd.merge(bigdata3i, fifthday, how='left', left_on=['positive_master_run'], right_on=['positive_master_run'])
+ 
+    
     
 #Put the dataset back into storage
 bucket2 = client.get_bucket('stagingarea')
+df_out = pd.DataFrame(bigdata2_gold)
+df_out.to_csv('lse_history_stagingarea_neg.csv', index=False)
+blob2 = bucket2.blob('lse_history_stagingarea_neg.csv')
+blob2.upload_from_filename('lse_history_stagingarea_neg.csv')
+bucket2 = client.get_bucket('stagingarea')
 df_out = pd.DataFrame(bigdata3_gold)
-df_out.to_csv('lse_history_stagingarea.csv', index=False)
-blob2 = bucket2.blob('lse_history_stagingarea.csv')
-blob2.upload_from_filename('lse_history_stagingarea.csv')
+df_out.to_csv('lse_history_stagingarea_pos.csv', index=False)
+blob2 = bucket2.blob('lse_history_stagingarea_pos.csv')
+blob2.upload_from_filename('lse_history_stagingarea_pos.csv')
