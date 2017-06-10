@@ -31,7 +31,7 @@ bigdata=bigdata.sort_values(['ticker','dates'],ascending=False)
 bigdata['key_cnt'] = bigdata.groupby(['ticker']).cumcount() 
 
 
-for i in range(0,165):  
+for i in range(0,300):  
     data=bigdata[bigdata['key_cnt'] >= i] 
     data2=data[data['key_cnt'] < 150 + i]
     data2['value']=i
