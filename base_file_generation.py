@@ -8,9 +8,9 @@ import pandas.core.algorithms as algos
 import StringIO
 from google.cloud import storage
 client = storage.Client()
-bucket = client.get_bucket('historyprices')
+bucket = client.get_bucket('stagingarea')
 # Then do other things...
-blob = bucket.get_blob('lse_history.csv')
+blob = bucket.get_blob('closing_prices_histUS.csv')
 # Define the object
 content = blob.download_as_string()
 #Because the pandas dataframe can only read from buffers or files, we need to take the string and put it into a buffer
@@ -391,11 +391,11 @@ bigdata3_gold=pd.merge(bigdata3i, fifthday, how='left', left_on=['positive_maste
 #Put the dataset back into storage
 bucket2 = client.get_bucket('stagingarea')
 df_out = pd.DataFrame(bigdata2_gold)
-df_out.to_csv('lse_history_stagingarea_neg.csv', index=False)
-blob2 = bucket2.blob('lse_history_stagingarea_neg.csv')
-blob2.upload_from_filename('lse_history_stagingarea_neg.csv')
+df_out.to_csv('us_history_stagingarea_neg.csv', index=False)
+blob2 = bucket2.blob('us_history_stagingarea_neg.csv')
+blob2.upload_from_filename('us_history_stagingarea_neg.csv')
 bucket2 = client.get_bucket('stagingarea')
 df_out = pd.DataFrame(bigdata3_gold)
-df_out.to_csv('lse_history_stagingarea_pos.csv', index=False)
-blob2 = bucket2.blob('lse_history_stagingarea_pos.csv')
-blob2.upload_from_filename('lse_history_stagingarea_pos.csv')
+df_out.to_csv('us_history_stagingarea_pos.csv', index=False)
+blob2 = bucket2.blob('us_history_stagingarea_pos.csv')
+blob2.upload_from_filename('us_history_stagingarea_pos.csv')
