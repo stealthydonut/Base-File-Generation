@@ -1,0 +1,388 @@
+import pandas as pd
+
+ism_dfx = pd.read_csv("C:\Python27\ISM_Runs.csv")
+ism_dfx['cnt'] = 1
+
+################################   
+#Get the duration for each stage   
+################################
+   
+dur1=ism_dfx[ism_dfx['POS Stage One']>0]
+dur1['stage']='POS Stage One'
+dur2=ism_dfx[ism_dfx['NEG Stage One']>0]
+dur2['stage']='POS Stage One'
+dur3=ism_dfx[ism_dfx['POS Stage Two']>0]
+dur3['stage']='POS Stage Two'
+dur4=ism_dfx[ism_dfx['NEG Stage Two']>0]
+dur4['stage']='NEG Stage Two'
+
+dur1x = dur1.groupby(['stage','POS Stage One'], as_index=False)['cnt'].sum()    
+dur1x['stage length']=dur1x['cnt']
+del dur1x['cnt']
+dur1xx=pd.merge(dur1x, ism_dfx, left_on='POS Stage One', right_on='POS Stage One')    
+
+dur2x = dur2.groupby(['stage','NEG Stage One'], as_index=False)['cnt'].sum()    
+dur2x['stage length']=dur2x['cnt']
+del dur2x['cnt']
+dur2xx=pd.merge(dur2x, ism_dfx, left_on='NEG Stage One', right_on='NEG Stage One')    
+
+dur3x = dur3.groupby(['stage','POS Stage Two'], as_index=False)['cnt'].sum()    
+dur3x['stage length']=dur3x['cnt']
+del dur3x['cnt']
+dur3xx=pd.merge(dur3x, ism_dfx, left_on='POS Stage Two', right_on='POS Stage Two')    
+
+dur4x = dur4.groupby(['stage','NEG Stage Two'], as_index=False)['cnt'].sum()    
+dur4x['stage length']=dur4x['cnt']
+del dur4x['cnt']
+dur4xx=pd.merge(dur4x, ism_dfx, left_on='NEG Stage Two', right_on='NEG Stage Two')    
+
+####################################
+#Set the files on top of one another
+####################################
+goldfile1 = dur1xx.append(dur2xx, ignore_index=True)
+goldfile2 = dur3xx.append(goldfile1, ignore_index=True)
+ism_df = dur4xx.append(goldfile2, ignore_index=True)
+
+############################################################################
+#Get the Max and Min for each stage within a phase to calculate the % Change
+############################################################################
+
+ism_df['POS1max']    = ism_df.groupby('POS Stage One')['Index'].cummax()
+ism_df['POS1min']    = ism_df.groupby('POS Stage One')['Index'].cummin()
+ism_df['POS2max']    = ism_df.groupby('POS Stage Two')['Index'].cummax()
+ism_df['POS2min']    = ism_df.groupby('POS Stage Two')['Index'].cummin()
+ism_df['NEG1max']    = ism_df.groupby('NEG Stage Two')['Index'].cummax()
+ism_df['NEG1min']    = ism_df.groupby('NEG Stage Two')['Index'].cummin()
+ism_df['NEG2max']    = ism_df.groupby('NEG Stage Two')['Index'].cummax()
+ism_df['NEG2min']    = ism_df.groupby('NEG Stage Two')['Index'].cummin()
+
+
+filelist=ism_df['POS Stage One']
+cc1=filelist.drop_duplicates().tolist()
+filelist=ism_df['NEG Stage One']
+cc2=filelist.drop_duplicates().tolist()
+filelist=ism_df['POS Stage Two']
+cc3=filelist.drop_duplicates().tolist()
+filelist=ism_df['NEG Stage Two']
+cc4=filelist.drop_duplicates().tolist()
+
+
+bigdata_1 = pd.DataFrame()
+bigdata_2 = pd.DataFrame()
+bigdata_3 = pd.DataFrame()
+bigdata_4 = pd.DataFrame()
+
+for i in cc1:    
+    test=ism_df[ism_df['POS Stage One']==i] 
+    test['stage']='POS Stage One'       
+    test1=test.tail(n=1)    
+    bigdata_1 = bigdata_1.append(test1,  ignore_index=False)
+
+
+bigdata_1['Max Value']=bigdata_1['POS1max']
+bigdata_1['Min Value']=bigdata_1['POS1min']
+bigdata_1a=bigdata_1[['stage','Max Value','Min Value','ind','monthyear','POS Stage One','stage length']]
+ism_df2 = ism_df.groupby(['POS Stage One'], as_index=False)['cnt'].sum()    
+bigdata_1b=pd.merge(ism_df2, bigdata_1a, left_on='POS Stage One', right_on='POS Stage One')
+bigdata_1b['stage num']=bigdata_1b['POS Stage One']
+del bigdata_1b['POS Stage One']
+
+for i in cc2:        
+    test=ism_df[ism_df['NEG Stage One']==i]        
+    test['stage']='NEG Stage One'
+    test1=test.tail(n=1)    
+    bigdata_2 = bigdata_2.append(test1,  ignore_index=False)
+
+bigdata_2['Max Value']=bigdata_2['NEG1max']
+bigdata_2['Min Value']=bigdata_2['NEG1min']
+bigdata_2a=bigdata_2[['stage','Max Value','Min Value','ind','monthyear','NEG Stage One','stage length']]
+ism_df2 = ism_df.groupby(['NEG Stage One'], as_index=False)['cnt'].sum()    
+bigdata_2b=pd.merge(ism_df2, bigdata_2a, left_on='NEG Stage One', right_on='NEG Stage One')
+bigdata_2b['stage num']=bigdata_2b['NEG Stage One']
+del bigdata_2b['NEG Stage One']
+
+print bigdata_2b
+
+for i in cc3:    
+    test=ism_df[ism_df['POS Stage Two']==i]
+    test['stage']='POS Stage Two'        
+    test1=test.tail(n=1)    
+    bigdata_3 = bigdata_3.append(test1,  ignore_index=False)
+
+bigdata_3['Max Value']=bigdata_3['POS2max']
+bigdata_3['Min Value']=bigdata_3['POS2min']
+bigdata_3a=bigdata_3[['stage','Max Value','Min Value','ind','monthyear','POS Stage Two','stage length']]
+ism_df2 = ism_df.groupby(['POS Stage Two'], as_index=False)['cnt'].sum()    
+bigdata_3b=pd.merge(ism_df2, bigdata_3a, left_on='POS Stage Two', right_on='POS Stage Two')
+bigdata_3b['stage num']=bigdata_3b['POS Stage Two']
+del bigdata_3b['POS Stage Two']
+
+for i in cc4:    
+    test=ism_df[ism_df['NEG Stage Two']==i]
+    test['stage']='NEG Stage Two'        
+    test1=test.tail(n=1)    
+    bigdata_4 = bigdata_4.append(test1,  ignore_index=False)
+
+bigdata_4['Max Value']=bigdata_4['NEG2max']
+bigdata_4['Min Value']=bigdata_4['NEG2min']
+bigdata_4a=bigdata_4[['stage','Max Value','Min Value','ind','monthyear','NEG Stage Two','stage length']]
+ism_df2 = ism_df.groupby(['NEG Stage Two'], as_index=False)['cnt'].sum()    
+bigdata_4b=pd.merge(ism_df2, bigdata_4a, left_on='NEG Stage Two', right_on='NEG Stage Two')
+bigdata_4b['stage num']=bigdata_4b['NEG Stage Two']
+del bigdata_4b['NEG Stage Two']
+
+####################################
+#Set the files on top of one another
+####################################
+goldfile1 = bigdata_1b.append(bigdata_2b, ignore_index=True)
+goldfile2 = bigdata_3b.append(goldfile1, ignore_index=True)
+goldfile3 = bigdata_4b.append(goldfile2, ignore_index=True)
+
+goldfile3['change']=(goldfile3['Max Value']-goldfile3['Min Value'])/goldfile3['Min Value']
+
+#################################################################################
+#Calculate the cumulative amount of times after an event happen to construct odds
+#################################################################################
+
+#for each stage - must create a list for days and change
+filelist1=goldfile3[goldfile3['stage']=='POS Stage One']
+filelist1x=filelist1['stage length']
+cc1x=filelist1x.tolist()
+filelist1=goldfile3[goldfile3['stage']=='POS Stage One']
+filelist1x=filelist1['change']
+cc1xx=filelist1x.tolist()
+filelist1=goldfile3[goldfile3['stage']=='NEG Stage One']
+filelist1x=filelist1['stage length']
+cc2x=filelist1x.tolist()
+filelist1=goldfile3[goldfile3['stage']=='NEG Stage One']
+filelist1x=filelist1['change']
+cc2xx=filelist1x.tolist()
+filelist1=goldfile3[goldfile3['stage']=='POS Stage Two']
+filelist1x=filelist1['stage length']
+cc3x=filelist1x.tolist()
+filelist1=goldfile3[goldfile3['stage']=='POS Stage Two']
+filelist1x=filelist1['change']
+cc3xx=filelist1x.tolist()
+filelist1=goldfile3[goldfile3['stage']=='NEG Stage Two']
+filelist1x=filelist1['stage length']
+cc4x=filelist1x.tolist()
+filelist1=goldfile3[goldfile3['stage']=='NEG Stage Two']
+filelist1x=filelist1['change']
+cc4xx=filelist1x.tolist()
+
+bigdata_1gld = pd.DataFrame()
+bigdata_1gldx = pd.DataFrame()
+bigdata_2gld = pd.DataFrame()
+bigdata_2gldx = pd.DataFrame()
+bigdata_3gld = pd.DataFrame()
+bigdata_3gldx = pd.DataFrame()
+bigdata_4gld = pd.DataFrame()
+bigdata_4gldx = pd.DataFrame()
+
+for i in cc1x:
+    counter=i
+    gfile=goldfile3[goldfile3['stage']=='POS Stage One']
+    gfilex=gfile[gfile['stage length']>counter]
+    gfilex['key cnt']=1      
+    test = gfilex.groupby(['stage'], as_index=False)['key cnt'].sum()  
+    test['stage length']=i
+    bigdata_1gld = bigdata_1gld.append(test,  ignore_index=False)    
+
+for i in cc1xx:
+    counter=i
+    gfile=goldfile3[goldfile3['stage']=='POS Stage One']
+    gfilex=gfile[gfile['change']>counter]
+    gfilex['key cnt']=1      
+    test = gfilex.groupby(['stage'], as_index=False)['key cnt'].sum()  
+    test['change']=i
+    bigdata_1gldx = bigdata_1gldx.append(test,  ignore_index=False)   
+
+####################################
+#Clean up the file to merge later on
+####################################
+try:
+   bigdata_1glda=bigdata_1gld.drop_duplicates(['key cnt'])
+except:
+   bigdata_1glda=bigdata_1gld
+bigdata_1glda['cnt after length']=bigdata_1glda['key cnt']
+del bigdata_1glda['key cnt']
+
+try:
+   bigdata_1gldxa=bigdata_1gldx.drop_duplicates(['key cnt'])
+except:
+   bigdata_1gldxa=bigdata_1gldx
+bigdata_1gldxa['cnt after change']=bigdata_1gldxa['key cnt']
+del bigdata_1gldxa['key cnt']
+
+#Next Stage
+
+for i in cc2x:
+    counter=i
+    gfile=goldfile3[goldfile3['stage']=='NEG Stage One']
+    gfilex=gfile[gfile['stage length']>counter]
+    gfilex['key cnt']=1      
+    test = gfilex.groupby(['stage'], as_index=False)['key cnt'].sum()  
+    test['stage length']=i
+    bigdata_2gld = bigdata_2gld.append(test,  ignore_index=False)    
+
+for i in cc2xx:
+    counter=i
+    gfile=goldfile3[goldfile3['stage']=='NEG Stage One']
+    gfilex=gfile[gfile['change']>counter]
+    gfilex['key cnt']=1      
+    test = gfilex.groupby(['stage'], as_index=False)['key cnt'].sum()  
+    test['change']=i
+    bigdata_2gldx = bigdata_2gldx.append(test,  ignore_index=False)   
+
+####################################
+#Clean up the file to merge later on
+####################################
+try:
+   bigdata_2glda=bigdata_2gld.drop_duplicates(['key cnt'])
+except:
+   bigdata_2glda=bigdata_2gld
+bigdata_2glda['cnt after length']=bigdata_2glda['key cnt']
+del bigdata_2glda['key cnt']
+
+try:
+   bigdata_2gldxa=bigdata_2gldx.drop_duplicates(['key cnt'])
+except:
+   bigdata_2gldxa=bigdata_2gldx
+bigdata_2gldxa['cnt after change']=bigdata_2gldxa['key cnt']
+del bigdata_2gldxa['key cnt']
+
+#Next Stage
+
+for i in cc3x:
+    counter=i
+    gfile=goldfile3[goldfile3['stage']=='POS Stage Two']
+    gfilex=gfile[gfile['stage length']>counter]
+    gfilex['key cnt']=1      
+    test = gfilex.groupby(['stage'], as_index=False)['key cnt'].sum()  
+    test['stage length']=i
+    bigdata_3gld = bigdata_3gld.append(test,  ignore_index=False)    
+  
+
+for i in cc3xx:
+    counter=i
+    gfile=goldfile3[goldfile3['stage']=='POS Stage Two']
+    gfilex=gfile[gfile['change']>counter]
+    gfilex['key cnt']=1      
+    test = gfilex.groupby(['stage'], as_index=False)['key cnt'].sum()  
+    test['change']=i
+    bigdata_3gldx = bigdata_3gldx.append(test,  ignore_index=False)   
+
+
+####################################
+#Clean up the file to merge later on
+####################################
+try:
+   bigdata_3glda=bigdata_3gld.drop_duplicates(['key cnt'])
+except:
+   bigdata_3glda=bigdata_3gld
+bigdata_3glda['cnt after length']=bigdata_3glda['key cnt']
+del bigdata_3glda['key cnt']
+
+try:
+   bigdata_3gldxa=bigdata_3gldx.drop_duplicates(['key cnt'])
+except:
+   bigdata_3gldxa=bigdata_3gldx
+bigdata_3gldxa['cnt after change']=bigdata_3gldxa['key cnt']
+del bigdata_3gldxa['key cnt']
+
+#Next Stage
+
+for i in cc4x:
+    counter=i
+    gfile=goldfile3[goldfile3['stage']=='NEG Stage Two']
+    gfilex=gfile[gfile['stage length']>counter]
+    gfilex['key cnt']=1      
+    test = gfilex.groupby(['stage'], as_index=False)['key cnt'].sum()  
+    test['stage length']=i
+    bigdata_4gld = bigdata_4gld.append(test,  ignore_index=False)    
+
+for i in cc4xx:
+    counter=i
+    gfile=goldfile3[goldfile3['stage']=='NEG Stage Two']
+    gfilex=gfile[gfile['change']>counter]
+    gfilex['key cnt']=1      
+    test = gfilex.groupby(['stage'], as_index=False)['key cnt'].sum()  
+    test['change']=i
+    bigdata_4gldx = bigdata_4gldx.append(test,  ignore_index=False)   
+
+####################################
+#Clean up the file to merge later on
+####################################
+try:
+   bigdata_4glda=bigdata_4gld.drop_duplicates(['key cnt'])
+except:
+   bigdata_4glda=bigdata_4gld
+bigdata_4glda['cnt after length']=bigdata_4glda['key cnt']
+del bigdata_4glda['key cnt']
+
+try:
+   bigdata_4gldxa=bigdata_4gldx.drop_duplicates(['key cnt'])
+except:
+   bigdata_4gldxa=bigdata_4gldx
+bigdata_4gldxa['cnt after change']=bigdata_4gldxa['key cnt']
+del bigdata_4gldxa['key cnt']
+
+
+####################################
+#Set the files on top of one another
+####################################
+goldfile1x = bigdata_1glda.append(bigdata_2glda, ignore_index=True)
+goldfile2x = bigdata_3glda.append(goldfile1x, ignore_index=True)
+goldfile3x = bigdata_4glda.append(goldfile2x, ignore_index=True)
+
+goldfile1xx = bigdata_1gldxa.append(bigdata_2gldxa, ignore_index=True)
+goldfile2xx = bigdata_3gldxa.append(goldfile1xx, ignore_index=True)
+goldfile3xx = bigdata_4gldxa.append(goldfile2xx, ignore_index=True)
+
+
+test=pd.merge(goldfile3, goldfile3x, how='left', left_on=['stage','stage length'], right_on=['stage','stage length'])   
+test2=pd.merge(test, goldfile3xx, how='left', left_on=['stage','change'], right_on=['stage','change'])   
+
+
+#Calculate the totals
+test2['key cnt']=1
+test3 = test2.groupby(['stage'], as_index=False)['key cnt'].sum() 
+del test2['key cnt'] 
+test4=pd.merge(test2, test3, how='left', left_on='stage', right_on='stage')   
+
+#Caclculate the odds and probabilities
+test4['dur diff']=(test4['key cnt']-test4['cnt after length'])/test4['key cnt']
+test4['d1']=1-test4['dur diff']
+test4['duration odds']=1/test4['d1']
+
+test4['vol diff']=(test4['key cnt']-test4['cnt after change'])/test4['key cnt']
+test4['d2']=1-test4['vol diff']
+test4['volatility odds']=1/test4['d2']
+del test4['d1']
+del test4['d2']
+
+
+
+
+
+ave = test4.groupby('stage').median()
+ave.columns=['count median','Max Value median','Min Value median','stage num']
+print ave
+
+
+
+############################
+#Calculate the median values
+############################
+ave = test2.groupby('stage').median()
+ave.columns=['count median','Max Value median','Min Value median','stage num']
+goldfile_original = bigdata_4.append(goldfile2, ignore_index=True)  
+
+
+
+
+
+
+   
+   
+
