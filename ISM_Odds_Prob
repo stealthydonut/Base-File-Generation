@@ -362,27 +362,16 @@ del test4['d1']
 del test4['d2']
 
 
-
-
-
 ave = test4.groupby('stage').median()
-ave.columns=['count median','Max Value median','Min Value median','stage num']
-print ave
+del ave['cnt']
+del ave['stage num']
+del ave['dur diff']
+del ave['vol diff']
+del ave['cnt after length']
+del ave['cnt after change']
+del ave['key cnt']
+ave['ind']=ave.index
+ave.columns=['median max value','median min value','median stage length','median change','median duration odds','median volatility odds','stage']
 
 
-
-############################
-#Calculate the median values
-############################
-ave = test2.groupby('stage').median()
-ave.columns=['count median','Max Value median','Min Value median','stage num']
-goldfile_original = bigdata_4.append(goldfile2, ignore_index=True)  
-
-
-
-
-
-
-   
-   
-
+test5=pd.merge(test4, ave, how='left', left_on='stage', right_on='stage')   
