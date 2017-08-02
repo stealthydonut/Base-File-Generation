@@ -3,8 +3,8 @@ import pandas as pd
 
 ism_dfx = pd.read_csv("C:\Users\davking\Documents\My Tableau Repository\Datasources\s_p.csv")
 ism_dfx['cnt'] = 1
-
-ism_dfx['Index2']=pd.to_numeric(ism_dfx['Index'], errors='coerce')
+ism_dfx['Indexx'] = ism_dfx.loc[ism_dfx['Index'].index, 'Index'].map(lambda x: str(x).replace(',',''))
+ism_dfx['Index2']=pd.to_numeric(ism_dfx['Indexx'], errors='coerce')
 ################################   
 #Get the duration for each stage   
 ################################
@@ -46,8 +46,8 @@ goldfile2 = dur3xx.append(goldfile1, ignore_index=True)
 ism_df = dur4xx.append(goldfile2, ignore_index=True)
 ############################################################################
 #Get the Max and Min for each stage within a phase to calculate the % Change
-############################################################################
 
+############################################################################
 ism_df['POS1max']    = ism_df.groupby('POS Stage One')['Index2'].cummax()
 ism_df['POS1min']    = ism_df.groupby('POS Stage One')['Index2'].cummin()
 ism_df['POS2max']    = ism_df.groupby('POS Stage Two')['Index2'].cummax()
@@ -56,6 +56,9 @@ ism_df['NEG1max']    = ism_df.groupby('NEG Stage One')['Index2'].cummax()
 ism_df['NEG1min']    = ism_df.groupby('NEG Stage One')['Index2'].cummin()
 ism_df['NEG2max']    = ism_df.groupby('NEG Stage Two')['Index2'].cummax()
 ism_df['NEG2min']    = ism_df.groupby('NEG Stage Two')['Index2'].cummin()
+
+
+print ism_df
 
 
 filelist=ism_df['POS Stage One']
@@ -140,6 +143,7 @@ del bigdata_4b['NEG Stage Two']
 goldfile1 = bigdata_1b.append(bigdata_2b, ignore_index=True)
 goldfile2 = bigdata_3b.append(goldfile1, ignore_index=True)
 goldfile3 = bigdata_4b.append(goldfile2, ignore_index=True)
+
 goldfile3['change']=(goldfile3['Max Value'] - goldfile3['Min Value'])/goldfile3['Min Value']
 
 #################################################################################
@@ -377,3 +381,5 @@ ave.columns=['median max value','median min value','median stage length','median
 
 
 test5=pd.merge(test4, ave, how='left', left_on='stage', right_on='stage')   
+
+test5.to_excel('C:\Users\davking\Documents\My Tableau Repository\Datasources\sp.xls', index=False)  
