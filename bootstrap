@@ -6,6 +6,7 @@ curl https://bootstrap.pypa.io/get-pip.py | python
 # quandl 
 sudo pip install pandas==0.19.2 quandl google-cloud pandas-datareader xlrd lxml requests matplotlib
 sudo pip install --upgrade google-cloud-storage
+sudo pip install fredapi
 
 touch /home/kinger6688/startup-done
 git clone https://github.com/stealthydonut/Base-File-Generation.git
