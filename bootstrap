@@ -9,6 +9,7 @@ sudo pip install --upgrade google-cloud-storage
 sudo pip install fredapi
 
 touch /home/kinger6688/startup-done
+#clone the git repos
 git clone https://github.com/stealthydonut/Base-File-Generation.git
 git clone https://github.com/stealthydonut/GDXJ-Trade.git
 # uncomment if you want this to run at boot time
